@@ -1,9 +1,15 @@
+
 #include <RedBot.h>
 
 RedBotSensor left_sen = RedBotSensor(A8);
 
 RedBotSensor right_sen = RedBotSensor(A5);
-
+//data_sheet
+// constants that are used in the code. lineStandard is the level to detect
+// if the sensor is on the line or not. If the sensor value is greater than this
+// the sensor is above a DARK line.
+//
+// SPEED sets the nominal speed
 //motor esquerdo
 #define en1 9
 #define in1 8
@@ -14,135 +20,140 @@ RedBotSensor right_sen = RedBotSensor(A5);
 #define in4 3
 int lineStandard = 300;
 
+
+
 void setup()
 { pinMode(in1, OUTPUT);
-pinMode(in2, OUTPUT);
-pinMode(in3, OUTPUT);
-pinMode(in4, OUTPUT);
-pinMode(en1, OUTPUT);
-pinMode(en2, OUTPUT);
-Serial.begin(9600);
-Serial.println("IR Sensor Readings:: ");
-delay(1000);
+  pinMode(in2, OUTPUT);
+  pinMode(in3, OUTPUT);
+  pinMode(in4, OUTPUT);
+  pinMode(en1, OUTPUT);
+  pinMode(en2, OUTPUT);
+  Serial.begin(9600);
+  Serial.println("IR Sensor Readings:: ");
+  delay(1000);
 }
 
 void loop()
 {
-Serial.print(left_sen.read());
-Serial.print("\t");
+  Serial.print(left_sen.read());
+  Serial.print("\t");
 
-Serial.print(right_sen.read());
-Serial.println();
+  Serial.print(right_sen.read());
+  Serial.println();
 
-//data_sheet
 
-if ((left_sen.read() < 150 ) && (right_sen.read() < 150))
-{
-do {
-forward();
-right_sen.read();
-left_sen.read();
-}
-while (left_sen.read() && right_sen.read() <= 150);
-}
+  //data_sheet
 
-if (right_sen.read() > lineStandard)
-{ //left
-do {
-left();
-right_sen.read();
+  if ((left_sen.read() < 150 ) && (right_sen.read() < 150))
+  {
+    do {
+      forward();
+      right_sen.read();
+      left_sen.read();
+    }
+    while (left_sen.read() && right_sen.read() <= 150);
+  }
 
-}
-while (right_sen.read() > lineStandard);
-}
+  if (right_sen.read() > lineStandard)
+  { //left
+    do {
+      left();
+      right_sen.read();
 
-else if (left_sen.read() > lineStandard)
-{ //right
+    }
+    while (right_sen.read() > lineStandard);
+  }
+  //data_sheet
 
-do {
-  right() ;
+  else if (left_sen.read() > lineStandard)
+  { //right
 
-  left_sen.read();
-}
+    do {
+      right() ;
 
-while (left_sen.read() > lineStandard);
-}
-if ((left_sen.read() > lineStandard) && (right_sen.read() > lineStandard) )
-{
+      left_sen.read();
+    }
 
-do {
-  forward();
-}
-while ((left_sen.read() > lineStandard) && (right_sen.read() > lineStandard));
-}
-else
-{
-//parte do verdim
-//parte será mudada com a substituição do sensor
-if ((left_sen.read() >= 200) && (left_sen.read() <= 400))
-{ if ((right_sen.read() >= lineStandard) || (right_sen.read() <= 100))
-{ forward();
-delay(200);
-left();
-delay(300);
-}
-}
-else
-{
-if ((right_sen.read() >= 200) && (right_sen.read() <= 400))
-{
-if ((left_sen.read() >= lineStandard) || (left_sen.read() <= 100)) {
-forward();
-delay(200);
-right();
-delay(300);
-}
-}
-}
-}
-delay(0); // add a delay to decrease sensitivity.
-}
+    while (left_sen.read() > lineStandard);
 
-//definição da direção dos motores
+
+  }
+  if ((left_sen.read() > lineStandard) && (right_sen.read() > lineStandard) )
+  {
+
+    do {
+      forward();
+    }
+    while ((left_sen.read() > lineStandard) && (right_sen.read() > lineStandard));
+
+  }
+  else
+  {
+    //parte do verdim
+
+    if ((left_sen.read() >= 200) && (left_sen.read() <= 400))
+    { if ((right_sen.read() >= lineStandard) || (right_sen.read() <= 100))
+      { forward();
+        delay(200);
+        left();
+        delay(300);
+      }
+    }
+    else
+    {
+      if ((right_sen.read() >= 200) && (right_sen.read() <= 400))
+      {
+        if ((left_sen.read() >= lineStandard) || (left_sen.read() <= 100)) {
+          forward();
+          delay(200);
+          right();
+          delay(300);
+        }
+      }
+    }
+  }
+  delay(0);  // add a delay to decrease sensitivity.
+}
 
 void right() {
-analogWrite(en1, 80);
-analogWrite(en2, 80);
-digitalWrite(in1, LOW);
-digitalWrite(in2, HIGH);
-digitalWrite(in3, HIGH);
-digitalWrite(in4, LOW);
+  analogWrite(en1, 80);
+  analogWrite(en2, 80);
+  digitalWrite(in1, LOW);
+  digitalWrite(in2, HIGH);
+  digitalWrite(in3, HIGH);
+  digitalWrite(in4, LOW);
 }
 void Stop () {
-analogWrite(en1, 0);
-analogWrite(en2, 0);
-digitalWrite(in1, LOW);
-digitalWrite(in2, LOW);
-digitalWrite(in3, LOW);
-digitalWrite(in4, LOW);
+  analogWrite(en1, 0);
+  analogWrite(en2, 0);
+  digitalWrite(in1, LOW);
+  digitalWrite(in2, LOW);
+  digitalWrite(in3, LOW);
+  digitalWrite(in4, LOW);
 }
 void left() {
-analogWrite(en1, 80);
-analogWrite(en2, 80);
-digitalWrite(in1, HIGH);
-digitalWrite(in2, LOW);
-digitalWrite(in3, LOW);
-digitalWrite(in4, HIGH);
+  analogWrite(en1, 80);
+  analogWrite(en2, 80);
+  digitalWrite(in1, HIGH);
+  digitalWrite(in2, LOW);
+  digitalWrite(in3, LOW);
+  digitalWrite(in4, HIGH);
 }
 void forward() {
-analogWrite(en1, 80);
-analogWrite(en2, 80);
-digitalWrite(in1, HIGH);
-digitalWrite(in2, LOW);
-digitalWrite(in3, HIGH);
-digitalWrite(in4, LOW);
+  analogWrite(en1, 80);
+  analogWrite(en2, 80);
+  digitalWrite(in1, HIGH);
+  digitalWrite(in2, LOW);
+  digitalWrite(in3, HIGH);
+  digitalWrite(in4, LOW);
 }
 void back() {
 
-analogWrite(en1, 80);
-analogWrite(en2, 80);
-digitalWrite(in1, LOW);
-digitalWrite(in2, HIGH);
-digitalWrite(in3, LOW);
-digitalWrite(in4, HIGH);
+  analogWrite(en1, 80);
+  analogWrite(en2, 80);
+  digitalWrite(in1, LOW);
+  digitalWrite(in2, HIGH);
+  digitalWrite(in3, LOW);
+  digitalWrite(in4, HIGH);
 }
